@@ -1,0 +1,16 @@
+---
+server:
+  port: 7777
+  servlet: 
+        context-path: /order-book
+---
+spring:
+  profiles: local, default
+  mvc:
+    view: 
+      prefix: /WEB-INF/templates/
+      suffix: .jsp
+  h2:
+    console:
+      enabled: true
+      path: /h2

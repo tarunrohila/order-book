@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<Configuration status="info" name="order-book" packages="">
+	<Appenders>
+		<Console name="STDOUT" target="SYSTEM_OUT" ignoreExceptions="false">
+			<PatternLayout>
+				<Pattern>%d{DATE} %-5p %-1c{1} : %C %M - %m%n</Pattern>
+			</PatternLayout>
+		</Console>
+		<RollingFile name="INFO" fileName="logs/order-book.log"
+			filePattern="logs/order-book-%d{MM-dd-yyyy}.log" ignoreExceptions="false"
+			append="true">
+			<TimeFilter start="00:00:00" end="23:59:59" onMatch="ACCEPT"
+				onMismatch="DENY" />
+			<PatternLayout>
+				<Pattern>%d{DATE} %-5p %-1c{1} : %C %M - %m%n</Pattern>
+			</PatternLayout>
+			<Policies>
+				<TimeBasedTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="20 MB" />
+			</Policies>
+		</RollingFile>
+	</Appenders>
+	<Loggers>
+		<Root level="info">
+			<AppenderRef ref="STDOUT" />
+			<AppenderRef ref="INFO" />
+		</Root>
+	</Loggers>
+</Configuration>
