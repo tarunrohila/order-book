@@ -4,7 +4,6 @@
 	<groupId>com.creditsuisse.orderbook.app</groupId>
 	<artifactId>order-book</artifactId>
 	<version>1.0</version>
-	<packaging>war</packaging>
 	<name>order-book</name>
 	<description>An application which manages order book</description>
 
@@ -101,15 +100,6 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-war-plugin</artifactId>
-				<configuration>
-					<warSourceDirectory>src/main/webapp</warSourceDirectory>
-					<warName>order-book</warName>
-					<failOnMissingWebXml>false</failOnMissingWebXml>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>
