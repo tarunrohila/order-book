@@ -43,20 +43,10 @@ public class Instrument implements Serializable {
 	 */
 	private String name;
 	
-	/*
-	 * Variable declaration for status
-	 */
-	private boolean status;
-	
-	/*
-	 * Variable declaration for quantity
-	 */
-	private int quantity;
-	
-	@OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
+	@OneToMany(cascade = CascadeType.REMOVE,orphanRemoval = true)
 	@JoinColumn(name = "INSTRUMENT_ID", foreignKey = @ForeignKey(name = "none"))
-	private Set<OrderDetail> orderDetail;
-
+	private Set<OrderBook> orderBook;
+	
 	/**
 	 * Method to get the value of name
 	 *
@@ -75,23 +65,6 @@ public class Instrument implements Serializable {
 		this.name = name;
 	}
 
-	/**
-	 * Method to get the value of status
-	 *
-	 * @return the status
-	 */
-	public boolean isStatus() {
-		return status;
-	}
-
-	/**
-	 * Method to set the value for status
-	 *
-	 * @param status the status to set
-	 */
-	public void setStatus(boolean status) {
-		this.status = status;
-	}
 
 	/**
 	 * Method to get the value of oid
@@ -112,40 +85,65 @@ public class Instrument implements Serializable {
 	}
 
 	/**
-	 * Method to get the value of order
+	 * Method to get the value of orderBook
 	 *
-	 * @return the order
+	 * @return the orderBook
 	 */
-	public Set<OrderDetail> getOrder() {
-		return orderDetail;
+	public Set<OrderBook> getOrderBook() {
+		return orderBook;
 	}
 
 	/**
-	 * Method to set the value for order
+	 * Method to set the value for orderBook
 	 *
-	 * @param order the order to set
+	 * @param orderBook the orderBook to set
 	 */
-	public void setOrder(Set<OrderDetail> orderDetail) {
-		this.orderDetail = orderDetail;
+	public void setOrderBook(Set<OrderBook> orderBook) {
+		this.orderBook = orderBook;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((oid == null) ? 0 : oid.hashCode());
+		result = prime * result + ((orderBook == null) ? 0 : orderBook.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Instrument other = (Instrument) obj;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (oid == null) {
+			if (other.oid != null)
+				return false;
+		} else if (!oid.equals(other.oid))
+			return false;
+		if (orderBook == null) {
+			if (other.orderBook != null)
+				return false;
+		} else if (!orderBook.equals(other.orderBook))
+			return false;
+		return true;
+	}
+
 	
-	/**
-	 * Method to get the value of quantity
-	 *
-	 * @return the quantity
-	 */
-	public int getQuantity() {
-		return quantity;
-	}
-
-	/**
-	 * Method to set the value for quantity
-	 *
-	 * @param quantity the quantity to set
-	 */
-	public void setQuantity(int quantity) {
-		this.quantity = quantity;
-	}
-	
-
 }

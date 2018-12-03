@@ -8,85 +8,47 @@ package com.creditsuisse.orderbook.app.constant;
  */
 public interface PageURLConstants {
 
-	/**
-	 * Constant for index url.
-	 */
-	String INDEX_URL = "/";
 	
 	/**
-	 * Constant for index page.
+	 * Constant for instruments.
 	 */
-	String INDEX_PAGE = "index";
+	String INSTRUMENTS = "/instruments";
 	
-	/**
-	 * Constant for instrument url.
-	 */
-	String INSTRUMENTS_URL = "/instruments";
-	
-	/**
-	 * Constant for instrument page.
-	 */
-	String INSTRUMENTS_PAGE = "order-book/instrument-home";
-	
-	/**
-	 * Constant for Add instrument url.
-	 */
-	String ADD_INSTRUMENT_URL = "/add-instrument";
-	
-	/**
-	 * Constant for add instrument page.
-	 */
-	String ADD_INSTRUMENT_PAGE = "order-book/add-instrument";
 	
 	/**
 	 * Constant for instrument form.
 	 */
-	String ADD_INSTRUMENT = "/add-instrument-form";
-	
-	/**
-	 * Constant for redirecting to  Order Books page.
-	 */
-	String INSTRUMENTS_REDIRECT= "redirect:/instruments";
-	
-	/**
-	 * Constant for redirecting to  orders page.
-	 */
-	String ORDERS_REDIRECT= "redirect:/orders";
-	
-	/**
-	 * Constant for toggle status for instrument.
-	 */
-	String TOGGLE_STATUS = "/toggle-status";
+	String ADD_INSTRUMENT = "/add-instrument";
 	
 	/**
 	 * Constant for delete instrument
 	 */
-	String DELETE_INSTRUMENT_FOR_ID = "/delete-instrument/{instrumentId}";
+	String DELETE_INSTRUMENT_FOR_NAME = "/{instrumentName}/delete-instrument";
 	
 	/**
-	 * Constant for orders
+	 * Constant for opening order book
 	 */
-	String ORDERS_URL = "/orders";
+	String OPEN_ORDER_BOOK = "/{instrumentName}/open";
 	
 	/**
-	 * Constant for orders page
+	 * Constant for closing order book
 	 */
-	String ORDERS_PAGE = "order-book/order-home";
+	String CLOSE_ORDER_BOOK = "/{instrumentName}/{orderBookId}/close";
 	
 	/**
-	 * Constant for buy orders
+	 * Constant for executing order book
 	 */
-	String BUY_ORDER = "/buy-order";
+	String EXECUTE_ORDER_BOOK = "/{instrumentName}/execute";
 	
 	/**
-	 * Constant for sell orders
+	 * Constant for adding order in an order book
 	 */
-	String SELL_ORDER = "/sell-order";
+	String ADD_ORDER = "/add-order";
 	
 	/**
 	 * Constant for order history
 	 */
-	String ORDER_HISTORY_DETAILS = "order-book/order-history";
+	String SHOW_ORDERS = "order-book/order-history";
 	
 
 }

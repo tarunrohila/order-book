@@ -1,5 +1,7 @@
 package com.creditsuisse.orderbook.app.dto;
 
+import java.util.Set;
+
 /**
  * This is Pojo class to for Order Book
  * 
@@ -19,34 +21,10 @@ public class InstrumentObject {
 	private String instrumentName;
 	
 	/*
-	 * Variable declaration for status
+	 * Variable declaration for orderBooks
 	 */
-	private boolean status;
+	private Set<OrderBookObject> orderBooks;
 	
-	/*
-	 * Variable declaration for quantity
-	 */
-	private int quantity;
-	
-	
-
-	/**
-	 * Method to get the value of quantity
-	 *
-	 * @return the quantity
-	 */
-	public int getQuantity() {
-		return quantity;
-	}
-
-	/**
-	 * Method to set the value for quantity
-	 *
-	 * @param quantity the quantity to set
-	 */
-	public void setQuantity(int quantity) {
-		this.quantity = quantity;
-	}
 
 	/**
 	 * Method to get the value of instrumentId
@@ -68,24 +46,6 @@ public class InstrumentObject {
 
 
 	/**
-	 * Method to get the value of status
-	 *
-	 * @return the status
-	 */
-	public boolean isStatus() {
-		return status;
-	}
-
-	/**
-	 * Method to set the value for status
-	 *
-	 * @param status the status to set
-	 */
-	public void setStatus(boolean status) {
-		this.status = status;
-	}
-
-	/**
 	 * Method to get the value of instrumentName
 	 *
 	 * @return the instrumentName
@@ -102,8 +62,23 @@ public class InstrumentObject {
 	public void setInstrumentName(String instrumentName) {
 		this.instrumentName = instrumentName;
 	}
-	
 
-	
+	/**
+	 * Method to get the value of orderBooks
+	 *
+	 * @return the orderBooks
+	 */
+	public Set<OrderBookObject> getOrderBooks() {
+		return orderBooks;
+	}
+
+	/**
+	 * Method to set the value for orderBooks
+	 *
+	 * @param orderBooks the orderBooks to set
+	 */
+	public void setOrderBooks(Set<OrderBookObject> orderBooks) {
+		this.orderBooks = orderBooks;
+	}
 
 }

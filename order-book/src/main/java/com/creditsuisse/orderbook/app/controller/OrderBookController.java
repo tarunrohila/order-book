@@ -3,18 +3,19 @@ package com.creditsuisse.orderbook.app.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.creditsuisse.orderbook.app.constant.PageURLConstants;
 import com.creditsuisse.orderbook.app.dto.InstrumentObject;
-import com.creditsuisse.orderbook.app.dto.OrderDetailObject;
+import com.creditsuisse.orderbook.app.dto.OrderBookObject;
 import com.creditsuisse.orderbook.app.service.OrderBookService;
 
 /**
@@ -23,7 +24,7 @@ import com.creditsuisse.orderbook.app.service.OrderBookService;
  * @author Tarun Rohila
  * @since Nov 29, 2018
  */
-@Controller
+@RestController
 public class OrderBookController extends AbstractController implements PageURLConstants {
 	
 	/*
@@ -33,103 +34,83 @@ public class OrderBookController extends AbstractController implements PageURLCo
 	private OrderBookService orderBookService;
 	
 	/**
-	 * This method loads instruments page
+	 * This method is used to create new instrument
 	 * 
-	 * @return instruments page
-	 */
-	@RequestMapping(value =INSTRUMENTS_URL, method = RequestMethod.GET)
-	public String loadInstrumentPage(ModelMap model) {
-		List<InstrumentObject> instruments = getOrderBookService().retrieveInstruments();
-		model.addAttribute("instruments",instruments);
-		LOGGER.info("Instrument page is loaded");
-		return INSTRUMENTS_PAGE;
-	}
-	
-	/**
-	 * This method loads add instrument page
-	 * 
-	 * @return add instrument page
-	 */
-	@RequestMapping(value =ADD_INSTRUMENT_URL, method = RequestMethod.GET)
-	public String loadAddOrderBookPage(ModelMap model) {
-		LOGGER.info("Add instrument page is loaded");
-		model.addAttribute("instrumentObject",new InstrumentObject());
-		return ADD_INSTRUMENT_PAGE;
-	}
-	
-	/**
-	 * This method is toggles the status of instrument as open or close
-	 * 
-	 * @param instrumentId
-	 * @param model
-	 */
-	@RequestMapping({ TOGGLE_STATUS })
-	public void toggleStatus(@RequestParam("instrumentId") Integer instrumentId, ModelMap model) {
-		if ((instrumentId != null) && (instrumentId.intValue() != 0)) {
-			getOrderBookService().toggleStatus(instrumentId);
-		}
-	}
-	
-	/**
-	 * This method add order book page
-	 * 
-	 * @return order book page
+	 * @return instrument which is created
 	 */
 	@PostMapping(value=ADD_INSTRUMENT)
-	public String addOrderBook(@ModelAttribute("orderBookObject") InstrumentObject orderBookObject, ModelMap model) {
+	public String addInstument(@RequestBody InstrumentObject orderBookObject) {
 		getOrderBookService().addInstrument(orderBookObject);
-		return INSTRUMENTS_REDIRECT;
+		return "New Instrument "+orderBookObject.getInstrumentName()+" is created" ;
 	}
 	
 	/**
-	 * This method is used to delete order book
-	 * 
-	 * @param instrumentId
-	 * @param model
+	 * This method returns all instruments
 	 */
-	@RequestMapping(value = DELETE_INSTRUMENT_FOR_ID, method = RequestMethod.GET)
-	public String deleteInstrument(@PathVariable("instrumentId") Long instrumentId, ModelMap model) {
-		if ((instrumentId != null) && (instrumentId != 0)) {
-			getOrderBookService().deleteInstrument(instrumentId);
-		}
-		return INSTRUMENTS_REDIRECT;
-	}
-	
-	/**
-	 * This method is used to delete order book
-	 * 
-	 * @param instrumentId
-	 * @param model
-	 */
-	@RequestMapping(value = ORDERS_URL, method = RequestMethod.GET)
-	public String loadOrdersPage(ModelMap model) {
+	@GetMapping(INSTRUMENTS)
+	public List<InstrumentObject> getAllInstruments() {
 		List<InstrumentObject> instruments = getOrderBookService().retrieveInstruments();
-		List<OrderDetailObject> orders = getOrderBookService().retrieveOrders();
-		model.addAttribute("instruments",instruments);
-		model.addAttribute("orders",orders);
-		return ORDERS_PAGE;
+		if (instruments.isEmpty()) {
+			new ResponseEntity<List<InstrumentObject>>(instruments, HttpStatus.NO_CONTENT);
+        }
+		return instruments;
 	}
 	
 	/**
-	 * This method is used to buy order
+	 * This method is used to delete instrument
 	 * 
-	 * @param buyOrderType
-	 * @param limitBuyPrice
-	 * @param buyQty
-	 * @param model
-	 * @return
+	 * @param instrumentName
 	 */
-	@RequestMapping(value = BUY_ORDER, method = RequestMethod.POST)
-	public String buyOrder(@RequestParam("instrumentId") String instrumentId,  @RequestParam("buyOrderType") String buyOrderType, @RequestParam("limitBuyPrice") Long limitBuyPrice, @RequestParam("buyQty") Integer buyQty, ModelMap model) {
-		OrderDetailObject orderDetailObject = new OrderDetailObject();
-		orderDetailObject.setInstrumentId(Long.valueOf(instrumentId));
-		orderDetailObject.setOrderType(buyOrderType);
-		orderDetailObject.setQuantity(buyQty);
-		if(limitBuyPrice != null && limitBuyPrice.intValue() != 0) {
-			orderDetailObject.setPrice(limitBuyPrice);
+	@DeleteMapping(DELETE_INSTRUMENT_FOR_NAME)
+	public String deleteInstrumentForName(@PathVariable("instrumentName") String instrumentName) {
+		if (instrumentName != null) {
+			getOrderBookService().deleteInstrumentForName(instrumentName);
 		}
-		getOrderBookService().buyOrder(orderDetailObject);
-		return ORDERS_REDIRECT;
+		return "Instrument : "+instrumentName+" is deleted";
+	}
+	
+	/**
+	 * This method is used to open order book
+	 * 
+	 * @param instrumentId
+	 */
+	@PostMapping(OPEN_ORDER_BOOK)
+	public String openOrderBook(@PathVariable("instrumentName") String instrumentName) {
+		OrderBookObject orderBookObject = new OrderBookObject();
+		InstrumentObject instrumentObject = getOrderBookService().retrieveInstrumentByName(instrumentName);
+		if(instrumentObject != null) {
+			orderBookObject.setStatus("OPEN");
+			orderBookObject.setInstrumentId(instrumentObject.getInstrumentId());
+			getOrderBookService().openOrderBook(orderBookObject);
+		} else {
+			return "Order book for "+instrumentName+" can't be opned because there are no instrument present with this name";
+		}
+	
+		return "Order book for "+instrumentName+" is open, you can add orders";
+	}
+	
+	/**
+	 * This method is used to close order book
+	 * 
+	 * @param instrumentId
+	 */
+	@PutMapping(CLOSE_ORDER_BOOK)
+	public String closeOrderBook(@PathVariable("instrumentName") String instrumentName, @PathVariable("orderBookId") Long orderBookId) {
+		InstrumentObject instrumentObject = getOrderBookService().retrieveInstrumentByName(instrumentName);
+		if(instrumentObject != null && instrumentObject.getOrderBooks() != null && !instrumentObject.getOrderBooks().isEmpty()) {
+			for(OrderBookObject orderBookObject : instrumentObject.getOrderBooks()) {
+				if(orderBookObject.getOrderId().equals(orderBookId)) {
+					orderBookObject.setStatus("CLOSE");
+					orderBookObject.setInstrumentId(instrumentObject.getInstrumentId());
+					//getOrderBookService().closeOrderBook(orderBookObject);
+					getOrderBookService().addInstrument(instrumentObject);
+				}
+			}
+		} else {
+			return "Order book for "+instrumentName+" can't be closed because there are no instrument/order book present with provided details";
+		}
+	
+		return "Order book for "+instrumentName+" is closed now, you can execute orders";
 	}
 	
 	/**
@@ -141,7 +122,7 @@ public class OrderBookController extends AbstractController implements PageURLCo
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(value = SELL_ORDER, method = RequestMethod.POST)
+	/*@RequestMapping(value = SELL_ORDER, method = RequestMethod.POST)
 	public String sellOrder(@RequestParam("instrumentId") String instrumentId, @RequestParam("sellOrderType") String sellOrderType, @RequestParam("limitSellPrice") Long limitSellPrice, @RequestParam("sellQty") Integer sellQty, ModelMap model) {
 		OrderDetailObject orderDetailObject = new OrderDetailObject();
 		orderDetailObject.setInstrumentId(Long.valueOf(instrumentId));
@@ -152,7 +133,7 @@ public class OrderBookController extends AbstractController implements PageURLCo
 		}
 		getOrderBookService().sellOrder(orderDetailObject);
 		return ORDERS_REDIRECT;
-	}
+	}*/
 
 	/**
 	 * Method to get the value of orderBookService

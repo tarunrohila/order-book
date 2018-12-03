@@ -21,15 +21,15 @@ public class OrderDetailMapper {
 		List<OrderDetailObject> orders = new ArrayList<>();
 		for(OrderDetail orderDetail : orderDetails) {
 			OrderDetailObject orderDetailObject = new OrderDetailObject();
-			orderDetailObject.setExecutionPrice(orderDetail.getExecutionPrice());
-			orderDetailObject.setExecutionQuantity(orderDetail.getExecutionQuantity());
-			orderDetailObject.setInstrumentId(orderDetail.getInstrumentId());
+			/*orderDetailObject.setExecutionPrice(orderDetail.getExecutionPrice());
+			orderDetailObject.setExecutionQuantity(orderDetail.getExecutionQuantity());*/
+			//orderDetailObject.setInstrumentId(orderDetail.getInstrumentId());
 			orderDetailObject.setOrderCreationDate(orderDetail.getOrderCreationDate());
 			orderDetailObject.setOrderId(orderDetail.getOid());
 			orderDetailObject.setOrderType(orderDetail.getOrderType());
 			orderDetailObject.setStatus(orderDetail.getStatus());
-			orderDetailObject.setTransactionType(orderDetail.getTransactionType());
-			orderDetailObject.setInstrument(orderDetail.getInstrument());
+			//orderDetailObject.setTransactionType(orderDetail.getTransactionType());
+			//orderDetailObject.setInstrument(orderDetail.getInstrument());
 			orders.add(orderDetailObject);
 		}
 		return orders;

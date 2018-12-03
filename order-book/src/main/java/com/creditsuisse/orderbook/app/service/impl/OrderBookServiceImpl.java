@@ -1,23 +1,20 @@
 package com.creditsuisse.orderbook.app.service.impl;
 
-import java.text.SimpleDateFormat;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.creditsuisse.orderbook.app.dto.InstrumentObject;
+import com.creditsuisse.orderbook.app.dto.OrderBookObject;
 import com.creditsuisse.orderbook.app.dto.OrderDetailObject;
 import com.creditsuisse.orderbook.app.mapper.InstrumentMapper;
+import com.creditsuisse.orderbook.app.mapper.OrderBookMapper;
 import com.creditsuisse.orderbook.app.mapper.OrderDetailMapper;
 import com.creditsuisse.orderbook.app.repository.InstrumentRepository;
+import com.creditsuisse.orderbook.app.repository.OrderBookRepository;
 import com.creditsuisse.orderbook.app.repository.OrderDetailRepository;
 import com.creditsuisse.orderbook.app.repository.domain.Instrument;
-import com.creditsuisse.orderbook.app.repository.domain.OrderDetail;
 import com.creditsuisse.orderbook.app.service.OrderBookService;
 
 /**
@@ -41,6 +38,14 @@ public class OrderBookServiceImpl implements OrderBookService {
 	
 	
 	/*
+	 * Autowired dependency to use OrderBookMapper object;
+	 */
+	@Autowired
+	private OrderBookMapper orderBookMapper;
+	
+	
+	
+	/*
 	 * Autowired dependency to use InstrumentRepository object;
 	 */
 	@Autowired
@@ -51,7 +56,13 @@ public class OrderBookServiceImpl implements OrderBookService {
 	 */
 	@Autowired
 	private OrderDetailRepository orderDetailRepository;
-
+	
+	/*
+	 * Autowired dependency to use OrderBookRepository object;
+	 */
+	@Autowired
+	private OrderBookRepository orderBookRepository;
+	
 	/**
 	 * This method is used to retrieve all Instruments
 	 * 
@@ -59,7 +70,7 @@ public class OrderBookServiceImpl implements OrderBookService {
 	 */
 	@Override
 	public List<InstrumentObject> retrieveInstruments() {
-		return getInstrumentMapper().mapInstrumentEntitytoObject(getInstrumentRepository().findAll());
+		return getInstrumentMapper().mapInstrumentEntitytoObjectList(getInstrumentRepository().findAll());
 	}
 	
 	
@@ -69,8 +80,8 @@ public class OrderBookServiceImpl implements OrderBookService {
 	 * @param orderBookObject
 	 */
 	@Override
-	public void addInstrument(InstrumentObject orderBookObject) {
-		getInstrumentRepository().save(getInstrumentMapper().mapInstrumentObjectToEntity(orderBookObject));
+	public void addInstrument(InstrumentObject instrumentObject) {
+		getInstrumentRepository().save(getInstrumentMapper().mapInstrumentObjectToEntity(instrumentObject));
 		
 	}
 	
@@ -82,7 +93,6 @@ public class OrderBookServiceImpl implements OrderBookService {
 	@Override
 	public void toggleStatus(Integer instrumentId) {
 		Instrument orderBook = getInstrumentRepository().getOne(Long.valueOf(instrumentId));
-		orderBook.setStatus(!orderBook.isStatus());
 		getInstrumentRepository().save(orderBook);
 		
 		
@@ -143,20 +153,19 @@ public class OrderBookServiceImpl implements OrderBookService {
 	 */
 	@Override
 	public void buyOrder(OrderDetailObject orderDetailObject) {
-		OrderDetail orderDetailEntity = new OrderDetail();
+		/*Order orderDetailEntity = new Order();
 		orderDetailEntity.setOrderCreationDate(new SimpleDateFormat("dd-MM-yyyy").format(new Date()));
-		orderDetailEntity.setTransactionType("buy");
 		orderDetailEntity.setOrderType(orderDetailObject.getOrderType());
 		if("limit".equalsIgnoreCase(orderDetailObject.getOrderType())) {
 			orderDetailEntity.setPrice(orderDetailObject.getPrice());
 		}
 		orderDetailEntity.setInstrumentId(orderDetailObject.getInstrumentId());
 		orderDetailEntity.setQuantity(orderDetailObject.getQuantity());
-		List<OrderDetail> orderDetails = getOrderDetailRepository().findOrderDetailsByInstrumentId(orderDetailObject.getInstrumentId()).stream().filter(orderDetail -> "sell".equals(orderDetail.getTransactionType())).collect(Collectors.toList());
-		Comparator<OrderDetail> compareByPrice = (OrderDetail o1, OrderDetail o2) ->
+		//List<Order> orderDetails = getOrderDetailRepository().findOrderDetailsByInstrumentId(orderDetailObject.getInstrumentId()).stream().filter(orderDetail -> "sell".equals(orderDetail.getTransactionType())).collect(Collectors.toList());
+		Comparator<Order> compareByPrice = (Order o1, Order o2) ->
         o1.getPrice().compareTo( o2.getPrice());
         Collections.sort(orderDetails,compareByPrice);
-		for(OrderDetail orderDetail : orderDetails) {
+		for(Order orderDetail : orderDetails) {
 			if((orderDetailObject.getQuantity() > orderDetail.getQuantity()) || (orderDetail.getPrice().longValue() > orderDetailObject.getPrice().longValue())) {
 				orderDetailEntity.setExecutionPrice(new Long(0));
 				orderDetailEntity.setStatus("invalid");
@@ -166,7 +175,7 @@ public class OrderBookServiceImpl implements OrderBookService {
 				orderDetailEntity.setStatus("valid");
 			}
 		}
-		getOrderDetailRepository().save(orderDetailEntity);
+		getOrderDetailRepository().save(orderDetailEntity);*/
 	}
 
 
@@ -177,7 +186,7 @@ public class OrderBookServiceImpl implements OrderBookService {
 	 */
 	@Override
 	public void sellOrder(OrderDetailObject orderDetailObject) {
-		OrderDetail orderDetailEntity = new OrderDetail();
+		/*Order orderDetailEntity = new Order();
 		orderDetailEntity.setOrderCreationDate(new SimpleDateFormat("dd-MM-yyyy").format(new Date()));
 		orderDetailEntity.setTransactionType("sell");
 		orderDetailEntity.setOrderType(orderDetailObject.getOrderType());
@@ -188,11 +197,11 @@ public class OrderBookServiceImpl implements OrderBookService {
 		orderDetailEntity.setQuantity(orderDetailObject.getQuantity());
 		orderDetailEntity.setStatus("invalid");
 		orderDetailEntity.setExecutionPrice(new Long(0));
-		List<OrderDetail> orderDetails = getOrderDetailRepository().findOrderDetailsByInstrumentId(orderDetailObject.getInstrumentId()).stream().filter(orderDetail -> "buy".equals(orderDetail.getTransactionType())).collect(Collectors.toList());
-		Comparator<OrderDetail> compareByPrice = (OrderDetail o1, OrderDetail o2) ->
+		List<Order> orderDetails = getOrderDetailRepository().findOrderDetailsByInstrumentId(orderDetailObject.getInstrumentId()).stream().filter(orderDetail -> "buy".equals(orderDetail.getTransactionType())).collect(Collectors.toList());
+		Comparator<Order> compareByPrice = (Order o1, Order o2) ->
         o1.getPrice().compareTo( o2.getPrice());
         Collections.sort(orderDetails,compareByPrice);
-		for(OrderDetail orderDetail : orderDetails) {
+		for(Order orderDetail : orderDetails) {
 			if((orderDetailObject.getQuantity() > orderDetail.getQuantity()) || (orderDetail.getPrice().longValue() > orderDetailObject.getPrice().longValue())) {
 				orderDetailEntity.setExecutionPrice(new Long(0));
 				orderDetailEntity.setStatus("invalid");
@@ -202,7 +211,7 @@ public class OrderBookServiceImpl implements OrderBookService {
 				orderDetailEntity.setStatus("valid");
 			}
 		}
-		getOrderDetailRepository().save(orderDetailEntity);
+		getOrderDetailRepository().save(orderDetailEntity);*/
 	}
 
 
@@ -253,8 +262,92 @@ public class OrderBookServiceImpl implements OrderBookService {
 	 */
 	@Override
 	public List<OrderDetailObject> retrieveOrders() {
-		List<OrderDetail> orderDetails = getOrderDetailRepository().findAll().stream().filter(orderDetail -> "buy".equals(orderDetail.getTransactionType())).collect(Collectors.toList());
-		return getOrderDetailMapper().mapOrderDetailEntitytoObject(orderDetails);
+		/*List<Order> orderDetails = getOrderDetailRepository().findAll().stream().filter(orderDetail -> "buy".equals(orderDetail.getTransactionType())).collect(Collectors.toList());
+		return getOrderDetailMapper().mapOrderDetailEntitytoObject(orderDetails);*/
+		return null;
+	}
+
+
+	/**
+	 * This method is used to delete financial instrument.
+	 */
+	@Override
+	public void deleteInstrumentForName(String instrumentName) {
+		getInstrumentRepository().deleteInstrumentForName(instrumentName);
+	}
+
+
+	/**
+	 * This method is used to retrieve instrument for name
+	 * 
+	 * @param instrumentName
+	 * @return instrument
+	 */
+	@Override
+	public InstrumentObject retrieveInstrumentByName(String instrumentName) {
+		return getInstrumentMapper().mapInstrumentEntitytoObject(getInstrumentRepository().findInstrumentByName(instrumentName));
+	}
+
+
+	/**
+	 * This method is used to open a new order book for an instrument.
+	 * 
+	 * @param orderBookObject
+	 */
+	@Override
+	public void openOrderBook(OrderBookObject orderBookObject) {
+		getOrderBookRepository().save(getOrderBookMapper().mapOrderBookObjectToEntity(orderBookObject));
+	}
+
+
+	/**
+	 * Method to get the value of orderBookMapper
+	 *
+	 * @return the orderBookMapper
+	 */
+	public OrderBookMapper getOrderBookMapper() {
+		return orderBookMapper;
+	}
+
+
+	/**
+	 * Method to set the value for orderBookMapper
+	 *
+	 * @param orderBookMapper the orderBookMapper to set
+	 */
+	public void setOrderBookMapper(OrderBookMapper orderBookMapper) {
+		this.orderBookMapper = orderBookMapper;
+	}
+
+
+	/**
+	 * Method to get the value of orderBookRepository
+	 *
+	 * @return the orderBookRepository
+	 */
+	public OrderBookRepository getOrderBookRepository() {
+		return orderBookRepository;
+	}
+
+
+	/**
+	 * Method to set the value for orderBookRepository
+	 *
+	 * @param orderBookRepository the orderBookRepository to set
+	 */
+	public void setOrderBookRepository(OrderBookRepository orderBookRepository) {
+		this.orderBookRepository = orderBookRepository;
+	}
+
+
+	/**
+	 * This method is used to close  order book for an instrument.
+	 * 
+	 * @param orderBookObject
+	 */
+	@Override
+	public void closeOrderBook(OrderBookObject orderBookObject) {
+		getOrderBookRepository().save(getOrderBookMapper().mapOrderBookObjectToEntity(orderBookObject));
 	}
 
 }
