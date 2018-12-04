@@ -9,8 +9,10 @@ import org.springframework.stereotype.Component;
 
 import com.creditsuisse.orderbook.app.dto.InstrumentObject;
 import com.creditsuisse.orderbook.app.dto.OrderBookObject;
+import com.creditsuisse.orderbook.app.dto.OrderDetailObject;
 import com.creditsuisse.orderbook.app.repository.domain.Instrument;
 import com.creditsuisse.orderbook.app.repository.domain.OrderBook;
+import com.creditsuisse.orderbook.app.repository.domain.OrderDetail;
 
 /**
  * This class is used to map Object to Entity and visa verca
@@ -43,7 +45,7 @@ public class InstrumentMapper {
 	 * Method to map Instrument object to entity
 	 * 
 	 * @param instrumentObject
-	 * @return entity of instrumen
+	 * @return entity of instrument
 	 */
 	public Instrument mapInstrumentObjectToEntity(InstrumentObject instrumentObject) {
 		Instrument instrument = new Instrument();
@@ -82,6 +84,20 @@ public class InstrumentMapper {
 					OrderBookObject orderBookObject = new OrderBookObject();
 					orderBookObject.setOrderId(orderBook.getOid());
 					orderBookObject.setStatus(orderBook.getStatus());
+					Set<OrderDetailObject> orders = new HashSet<>();
+					for(OrderDetail orderDetail : orderBook.getOrder()) {
+						OrderDetailObject orderDetailObject = new OrderDetailObject();
+						orderDetailObject.setEntryDate(orderDetail.getOrderCreationDate());
+						orderDetailObject.setInstrumentId(orderDetail.getInstrumentId());
+						orderDetailObject.setOrderBookId(orderDetail.getOrderBookId());
+						orderDetailObject.setOrderId(orderDetail.getOid());
+						orderDetailObject.setOrderType(orderDetail.getOrderType());
+						orderDetailObject.setPrice(orderDetail.getPrice());
+						orderDetailObject.setQuantity(orderDetail.getQuantity());
+						orderDetailObject.setStatus(orderDetail.getStatus());
+						orders.add(orderDetailObject);
+					}
+					orderBookObject.setOrders(orders);
 					orderBookObjects.add(orderBookObject);
 				}
 				instrumentObject.setOrderBooks(orderBookObjects);

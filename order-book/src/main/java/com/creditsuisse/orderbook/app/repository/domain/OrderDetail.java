@@ -2,12 +2,15 @@ package com.creditsuisse.orderbook.app.repository.domain;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * Entity Class for Order to save this object in database.
@@ -28,34 +31,51 @@ public class OrderDetail implements Serializable {
 	 * Variable declaration for oid
 	 */
 	@Id
+	@ApiModelProperty(notes = "The database generated ID")
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private Long oid;
 	
 	/*
 	 * Variable declaration for orderType
 	 */
+	@ApiModelProperty(notes = "Order type can be limit or market")
 	private String orderType;
 	
 	/*
 	 * Variable declaration for status
 	 */
+	@ApiModelProperty(notes = "Status or order")
 	private String status;
 	
 	/*
 	 * Variable declaration for quantity
 	 */
+	@ApiModelProperty(notes = "Quantity of order")
 	private int quantity;
 	
 	/*
 	 * Variable declaration for price
 	 */
+	@ApiModelProperty(notes = "Price limit")
 	private Long price;
 	
 	
 	/*
 	 * Variable declaration for orderCreationDate
 	 */
+	@ApiModelProperty(notes = "Event Creation date")
 	private String orderCreationDate;
+	
+	/*
+	 * Variable declaration for orderCreationDate
+	 */
+	@ApiModelProperty(notes = "Order book identifier")
+	@Column(name="ORDER_BOOK_ID")
+	private Long orderBookId;
+	
+	@ApiModelProperty(notes = "Instrument identifier")
+	@Column(name="INSTRUMENT_ID")
+	private Long instrumentId;
 	
 
 	/**
@@ -169,6 +189,24 @@ public class OrderDetail implements Serializable {
 		this.orderType = orderType;
 	}
 
+	/**
+	 * Method to get the value of orderBookId
+	 *
+	 * @return the orderBookId
+	 */
+	public Long getOrderBookId() {
+		return orderBookId;
+	}
+
+	/**
+	 * Method to set the value for orderBookId
+	 *
+	 * @param orderBookId the orderBookId to set
+	 */
+	public void setOrderBookId(Long orderBookId) {
+		this.orderBookId = orderBookId;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -225,6 +263,24 @@ public class OrderDetail implements Serializable {
 		} else if (!status.equals(other.status))
 			return false;
 		return true;
+	}
+
+	/**
+	 * Method to get the value of instrumentId
+	 *
+	 * @return the instrumentId
+	 */
+	public Long getInstrumentId() {
+		return instrumentId;
+	}
+
+	/**
+	 * Method to set the value for instrumentId
+	 *
+	 * @param instrumentId the instrumentId to set
+	 */
+	public void setInstrumentId(Long instrumentId) {
+		this.instrumentId = instrumentId;
 	}
 
 

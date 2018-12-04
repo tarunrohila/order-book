@@ -38,12 +38,12 @@ public interface PageURLConstants {
 	/**
 	 * Constant for executing order book
 	 */
-	String EXECUTE_ORDER_BOOK = "/{instrumentName}/execute";
+	String EXECUTE_ORDER_BOOK = "/{instrumentName}/{orderBookId}/execute";
 	
 	/**
 	 * Constant for adding order in an order book
 	 */
-	String ADD_ORDER = "/add-order";
+	String ADD_ORDER = "/{instrumentName}/{orderBookId}/add-order";
 	
 	/**
 	 * Constant for order history

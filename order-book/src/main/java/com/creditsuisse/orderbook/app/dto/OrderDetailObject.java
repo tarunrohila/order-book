@@ -1,7 +1,5 @@
 package com.creditsuisse.orderbook.app.dto;
 
-import com.creditsuisse.orderbook.app.repository.domain.Instrument;
-
 /**
  * This is dto class order order details.
  * 
@@ -15,15 +13,6 @@ public class OrderDetailObject {
 	 */
 	private Long orderId;
 	
-	/*
-	 * Variable declaration for orderType
-	 */
-	private String transactionType;
-	
-	/*
-	 * Variable declaration for orderType
-	 */
-	private String orderType;
 	
 	/*
 	 * Variable declaration for status
@@ -36,31 +25,29 @@ public class OrderDetailObject {
 	private int quantity;
 	
 	/*
-	 * Variable declaration for executionQuantity
-	 */
-	private int executionQuantity;
-	
-	/*
 	 * Variable declaration for price
 	 */
 	private Long price;
 	
 	/*
-	 * Variable declaration for executionPrice
+	 * Variable declaration for entryDate
 	 */
-	private Long executionPrice;
-	
-	/*
-	 * Variable declaration for orderCreationDate
-	 */
-	private String orderCreationDate;;
+	private String entryDate;
 	
 	/*
 	 * Variable declaration for instrumentId
 	 */
 	private Long instrumentId;
 	
-	private Instrument instrument;
+	/*
+	 * Variable declaration for orderType
+	 */
+	private String orderType;
+	
+	/*
+	 * Variable declaration for instrument
+	 */
+	private Long orderBookId;
 
 	/**
 	 * Method to get the value of orderId
@@ -78,42 +65,6 @@ public class OrderDetailObject {
 	 */
 	public void setOrderId(Long orderId) {
 		this.orderId = orderId;
-	}
-
-	/**
-	 * Method to get the value of transactionType
-	 *
-	 * @return the transactionType
-	 */
-	public String getTransactionType() {
-		return transactionType;
-	}
-
-	/**
-	 * Method to set the value for transactionType
-	 *
-	 * @param transactionType the transactionType to set
-	 */
-	public void setTransactionType(String transactionType) {
-		this.transactionType = transactionType;
-	}
-
-	/**
-	 * Method to get the value of orderType
-	 *
-	 * @return the orderType
-	 */
-	public String getOrderType() {
-		return orderType;
-	}
-
-	/**
-	 * Method to set the value for orderType
-	 *
-	 * @param orderType the orderType to set
-	 */
-	public void setOrderType(String orderType) {
-		this.orderType = orderType;
 	}
 
 	/**
@@ -153,24 +104,6 @@ public class OrderDetailObject {
 	}
 
 	/**
-	 * Method to get the value of executionQuantity
-	 *
-	 * @return the executionQuantity
-	 */
-	public int getExecutionQuantity() {
-		return executionQuantity;
-	}
-
-	/**
-	 * Method to set the value for executionQuantity
-	 *
-	 * @param executionQuantity the executionQuantity to set
-	 */
-	public void setExecutionQuantity(int executionQuantity) {
-		this.executionQuantity = executionQuantity;
-	}
-
-	/**
 	 * Method to get the value of price
 	 *
 	 * @return the price
@@ -189,39 +122,21 @@ public class OrderDetailObject {
 	}
 
 	/**
-	 * Method to get the value of executionPrice
+	 * Method to get the value of entryDate
 	 *
-	 * @return the executionPrice
+	 * @return the entryDate
 	 */
-	public Long getExecutionPrice() {
-		return executionPrice;
+	public String getEntryDate() {
+		return entryDate;
 	}
 
 	/**
-	 * Method to set the value for executionPrice
+	 * Method to set the value for entryDate
 	 *
-	 * @param executionPrice the executionPrice to set
+	 * @param entryDate the entryDate to set
 	 */
-	public void setExecutionPrice(Long executionPrice) {
-		this.executionPrice = executionPrice;
-	}
-
-	/**
-	 * Method to get the value of orderCreationDate
-	 *
-	 * @return the orderCreationDate
-	 */
-	public String getOrderCreationDate() {
-		return orderCreationDate;
-	}
-
-	/**
-	 * Method to set the value for orderCreationDate
-	 *
-	 * @param orderCreationDate the orderCreationDate to set
-	 */
-	public void setOrderCreationDate(String orderCreationDate) {
-		this.orderCreationDate = orderCreationDate;
+	public void setEntryDate(String entryDate) {
+		this.entryDate = entryDate;
 	}
 
 	/**
@@ -243,22 +158,41 @@ public class OrderDetailObject {
 	}
 
 	/**
-	 * Method to get the value of instrument
+	 * Method to get the value of orderType
 	 *
-	 * @return the instrument
+	 * @return the orderType
 	 */
-	public Instrument getInstrument() {
-		return instrument;
+	public String getOrderType() {
+		return orderType;
 	}
 
 	/**
-	 * Method to set the value for instrument
+	 * Method to set the value for orderType
 	 *
-	 * @param instrument the instrument to set
+	 * @param orderType the orderType to set
 	 */
-	public void setInstrument(Instrument instrument) {
-		this.instrument = instrument;
+	public void setOrderType(String orderType) {
+		this.orderType = orderType;
 	}
+
+	/**
+	 * Method to get the value of orderBookId
+	 *
+	 * @return the orderBookId
+	 */
+	public Long getOrderBookId() {
+		return orderBookId;
+	}
+
+	/**
+	 * Method to set the value for orderBookId
+	 *
+	 * @param orderBookId the orderBookId to set
+	 */
+	public void setOrderBookId(Long orderBookId) {
+		this.orderBookId = orderBookId;
+	}
+
 	
 	
 

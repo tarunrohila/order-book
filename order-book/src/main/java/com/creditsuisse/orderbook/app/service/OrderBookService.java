@@ -2,6 +2,7 @@ package com.creditsuisse.orderbook.app.service;
 
 import java.util.List;
 
+import com.creditsuisse.orderbook.app.dto.ExecutionParameter;
 import com.creditsuisse.orderbook.app.dto.InstrumentObject;
 import com.creditsuisse.orderbook.app.dto.OrderBookObject;
 import com.creditsuisse.orderbook.app.dto.OrderDetailObject;
@@ -43,20 +44,6 @@ public interface OrderBookService {
 	void deleteInstrument(Long instrumentId);
 
 	/**
-	 * Method to buy order 
-	 * 
-	 * @param orderDetailObject
-	 */
-	void buyOrder(OrderDetailObject orderDetailObject);
-
-	/**
-	 * Method to sell order
-	 * 
-	 * @param orderDetailObject
-	 */
-	void sellOrder(OrderDetailObject orderDetailObject);
-
-	/**
 	 * Method to retrieve orders
 	 * 
 	 * @return list of orders
@@ -92,5 +79,20 @@ public interface OrderBookService {
 	 * @param orderBookObject
 	 */
 	void closeOrderBook(OrderBookObject orderBookObject);
+
+	/**
+	 * This method is used to add new order
+	 * 
+	 * @param orderDetailObject
+	 */
+	void addOrder(OrderDetailObject orderDetailObject);
+
+	/**
+	 * This method is used to execute order
+	 * 
+	 * @param orderBookObject
+	 * @param executionParameter 
+	 */
+	String executeOrderBook(OrderBookObject orderBookObject, ExecutionParameter executionParameter);
 
 }

@@ -14,6 +14,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * Entity Class for Order book to save this object in database.
  * 
@@ -35,12 +37,14 @@ public class Instrument implements Serializable {
 	 * Variable declaration for oid
 	 */
 	@Id
+	@ApiModelProperty(notes = "The database generated  ID")
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private Long oid;
 	
 	/*
 	 * Variable declaration for name
 	 */
+	@ApiModelProperty(notes = "Financial instrument name")
 	private String name;
 	
 	@OneToMany(cascade = CascadeType.REMOVE,orphanRemoval = true)

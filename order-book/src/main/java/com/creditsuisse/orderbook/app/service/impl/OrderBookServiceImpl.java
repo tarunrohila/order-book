@@ -1,10 +1,13 @@
 package com.creditsuisse.orderbook.app.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.creditsuisse.orderbook.app.dto.ExecutionParameter;
 import com.creditsuisse.orderbook.app.dto.InstrumentObject;
 import com.creditsuisse.orderbook.app.dto.OrderBookObject;
 import com.creditsuisse.orderbook.app.dto.OrderDetailObject;
@@ -42,7 +45,6 @@ public class OrderBookServiceImpl implements OrderBookService {
 	 */
 	@Autowired
 	private OrderBookMapper orderBookMapper;
-	
 	
 	
 	/*
@@ -143,75 +145,6 @@ public class OrderBookServiceImpl implements OrderBookService {
 	 */
 	public void setInstrumentRepository(InstrumentRepository instrumentRepository) {
 		this.instrumentRepository = instrumentRepository;
-	}
-
-
-	/**
-	 * Method to buy order 
-	 * 
-	 * @param orderDetailObject
-	 */
-	@Override
-	public void buyOrder(OrderDetailObject orderDetailObject) {
-		/*Order orderDetailEntity = new Order();
-		orderDetailEntity.setOrderCreationDate(new SimpleDateFormat("dd-MM-yyyy").format(new Date()));
-		orderDetailEntity.setOrderType(orderDetailObject.getOrderType());
-		if("limit".equalsIgnoreCase(orderDetailObject.getOrderType())) {
-			orderDetailEntity.setPrice(orderDetailObject.getPrice());
-		}
-		orderDetailEntity.setInstrumentId(orderDetailObject.getInstrumentId());
-		orderDetailEntity.setQuantity(orderDetailObject.getQuantity());
-		//List<Order> orderDetails = getOrderDetailRepository().findOrderDetailsByInstrumentId(orderDetailObject.getInstrumentId()).stream().filter(orderDetail -> "sell".equals(orderDetail.getTransactionType())).collect(Collectors.toList());
-		Comparator<Order> compareByPrice = (Order o1, Order o2) ->
-        o1.getPrice().compareTo( o2.getPrice());
-        Collections.sort(orderDetails,compareByPrice);
-		for(Order orderDetail : orderDetails) {
-			if((orderDetailObject.getQuantity() > orderDetail.getQuantity()) || (orderDetail.getPrice().longValue() > orderDetailObject.getPrice().longValue())) {
-				orderDetailEntity.setExecutionPrice(new Long(0));
-				orderDetailEntity.setStatus("invalid");
-			} else {
-				orderDetailEntity.setExecutionPrice(orderDetail.getPrice());
-				orderDetailEntity.setExecutionQuantity(orderDetailObject.getQuantity());
-				orderDetailEntity.setStatus("valid");
-			}
-		}
-		getOrderDetailRepository().save(orderDetailEntity);*/
-	}
-
-
-	/**
-	 * Method to sell order
-	 * 
-	 * @param orderDetailObject
-	 */
-	@Override
-	public void sellOrder(OrderDetailObject orderDetailObject) {
-		/*Order orderDetailEntity = new Order();
-		orderDetailEntity.setOrderCreationDate(new SimpleDateFormat("dd-MM-yyyy").format(new Date()));
-		orderDetailEntity.setTransactionType("sell");
-		orderDetailEntity.setOrderType(orderDetailObject.getOrderType());
-		if("limit".equalsIgnoreCase(orderDetailObject.getOrderType())) {
-			orderDetailEntity.setPrice(orderDetailObject.getPrice());
-		}
-		orderDetailEntity.setInstrumentId(orderDetailObject.getInstrumentId());
-		orderDetailEntity.setQuantity(orderDetailObject.getQuantity());
-		orderDetailEntity.setStatus("invalid");
-		orderDetailEntity.setExecutionPrice(new Long(0));
-		List<Order> orderDetails = getOrderDetailRepository().findOrderDetailsByInstrumentId(orderDetailObject.getInstrumentId()).stream().filter(orderDetail -> "buy".equals(orderDetail.getTransactionType())).collect(Collectors.toList());
-		Comparator<Order> compareByPrice = (Order o1, Order o2) ->
-        o1.getPrice().compareTo( o2.getPrice());
-        Collections.sort(orderDetails,compareByPrice);
-		for(Order orderDetail : orderDetails) {
-			if((orderDetailObject.getQuantity() > orderDetail.getQuantity()) || (orderDetail.getPrice().longValue() > orderDetailObject.getPrice().longValue())) {
-				orderDetailEntity.setExecutionPrice(new Long(0));
-				orderDetailEntity.setStatus("invalid");
-			} else {
-				orderDetailEntity.setExecutionPrice(orderDetail.getPrice());
-				orderDetailEntity.setExecutionQuantity(orderDetailObject.getQuantity());
-				orderDetailEntity.setStatus("valid");
-			}
-		}
-		getOrderDetailRepository().save(orderDetailEntity);*/
 	}
 
 
@@ -347,7 +280,58 @@ public class OrderBookServiceImpl implements OrderBookService {
 	 */
 	@Override
 	public void closeOrderBook(OrderBookObject orderBookObject) {
-		getOrderBookRepository().save(getOrderBookMapper().mapOrderBookObjectToEntity(orderBookObject));
+		getOrderBookRepository().closeOrderBook(orderBookObject.getStatus(), orderBookObject.getOrderId());
+	}
+
+
+	/**
+	 * This method is used to add a new order.
+	 */
+	@Override
+	public void addOrder(OrderDetailObject orderDetailObject) {
+		getOrderDetailRepository().save(getOrderDetailMapper().mapOrderDetailObjectToEntity(orderDetailObject));
+		
+	}
+
+
+	/**
+	 * This method is used to execute order
+	 * 
+	 * @param orderBookObject
+	 */
+	@Override
+	public String executeOrderBook(OrderBookObject orderBookObject, ExecutionParameter executionParameter) {
+		List<OrderDetailObject> validOrders = new ArrayList<>();
+		Long demand = new Long(0);
+		for(OrderDetailObject detailObject: orderBookObject.getOrders()) {
+			if("limit".equalsIgnoreCase(detailObject.getOrderType()) && detailObject.getPrice()!=null && executionParameter.getExecutionPrice() >= detailObject.getPrice()) {
+				detailObject.setStatus("valid");
+				getOrderDetailRepository().setOrderStatus(detailObject.getStatus(), detailObject.getOrderId());
+			} else if("market".equalsIgnoreCase(detailObject.getOrderType())) {
+				detailObject.setStatus("valid");
+				getOrderDetailRepository().setOrderStatus(detailObject.getStatus(), detailObject.getOrderId());
+			} else {
+				detailObject.setStatus("invalid");
+				getOrderDetailRepository().setOrderStatusAndQty(detailObject.getStatus(), detailObject.getOrderId(),  0);
+			}
+			
+			validOrders = orderBookObject.getOrders().stream().filter(orderDetail -> "valid".equalsIgnoreCase(orderDetail.getStatus())).collect(Collectors.toList());
+			demand = validOrders.stream().mapToLong(order -> order.getPrice()).sum();
+			if(executionParameter.getExecutionQuantity() < demand) {
+				return "Demand is higher than execution quantity";
+			} else {
+				for(OrderDetailObject validOrder : validOrders) {
+					if("market".equalsIgnoreCase(validOrder.getOrderType())) {
+						getOrderDetailRepository().setOrderStatusAndPrice(validOrder.getStatus(), validOrder.getOrderId(), executionParameter.getExecutionPrice());
+					} else {
+						getOrderDetailRepository().setOrderStatusAndQty(validOrder.getStatus(), validOrder.getOrderId(), validOrder.getQuantity());
+					}
+				}
+			}
+		}
+		getOrderBookRepository().executeOrderBook(orderBookObject.getStatus(), orderBookObject.getOrderId());
+		return "Order execution id done";
+		
 	}
 
 }
