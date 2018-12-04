@@ -20,6 +20,7 @@ import com.creditsuisse.orderbook.app.dto.ExecutionParameter;
 import com.creditsuisse.orderbook.app.dto.InstrumentObject;
 import com.creditsuisse.orderbook.app.dto.OrderBookObject;
 import com.creditsuisse.orderbook.app.dto.OrderDetailObject;
+import com.creditsuisse.orderbook.app.dto.Stats;
 import com.creditsuisse.orderbook.app.service.OrderBookService;
 
 import io.swagger.annotations.Api;
@@ -76,8 +77,9 @@ public class OrderBookController extends AbstractController implements PageURLCo
 	public String deleteInstrumentForName(@PathVariable("instrumentName") String instrumentName) {
 		if (instrumentName != null) {
 			getOrderBookService().deleteInstrumentForName(instrumentName);
+			return "Instrument : "+instrumentName+" is deleted";
 		}
-		return "Instrument : "+instrumentName+" is deleted";
+		return "Please provide a valid instrument name";
 	}
 	
 	/**
@@ -187,6 +189,7 @@ public class OrderBookController extends AbstractController implements PageURLCo
 					orderDetailObject.setStatus("invalid");
 					orderDetailObject.setEntryDate(new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date()));
 					getOrderBookService().addOrder(orderDetailObject);
+					return "New order for "+instrumentName+" is added";
 				}
 			}
 		} 
@@ -210,6 +213,37 @@ public class OrderBookController extends AbstractController implements PageURLCo
 	 */
 	public void setOrderBookService(final OrderBookService orderBookService) {
 		this.orderBookService = orderBookService;
+	}
+	
+	/**
+	 * This method is used to provide stats
+	 * 
+	 * @param instrumentName
+	 * @param orderBookId
+	 * @return
+	 */
+	@ApiOperation(value="Method to get statistic for an instrument", response = Stats.class)
+	@GetMapping(STATS)
+	public Stats getStats(@PathVariable("instrumentName") String instrumentName, @PathVariable("orderBookId") Long orderBookId) {
+		Stats stats = null;
+		InstrumentObject instrumentObject = getOrderBookService().retrieveInstrumentByName(instrumentName);
+		if(instrumentObject != null) {
+			stats = getOrderBookService().getStats(instrumentObject.getInstrumentId(),orderBookId);
+		}
+		return stats;
+	}
+	
+	/**
+	 * Method to get order details
+	 * 
+	 * @param orderId
+	 * @return
+	 */
+	@ApiOperation(value="Method to get detail for an order", response = OrderDetailObject.class)
+	@GetMapping(ORDER_DETAIL)
+	public OrderDetailObject getOrderDetail(@PathVariable("orderId") Long orderId) {
+		OrderDetailObject  orderDetailObject= getOrderBookService().retrieveOrderDetails(orderId);
+		return orderDetailObject;
 	}
 
 }

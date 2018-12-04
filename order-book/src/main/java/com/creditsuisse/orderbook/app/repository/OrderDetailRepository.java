@@ -1,5 +1,7 @@
 package com.creditsuisse.orderbook.app.repository;
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -29,5 +31,8 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail, Long> 
 	@Modifying
 	@Query("UPDATE OrderDetail SET status= :status, price= :price  WHERE oid= :orderId")
 	void setOrderStatusAndPrice(@Param("status") final String status, @Param("orderId") final Long orderId, @Param("price") final Long price);
+
+	@Query("SELECT o FROM OrderDetail o where instrumentId= :instrumentId and orderBookId= :orderBookId")
+	List<OrderDetail> getAllOrdersForInstrument(@Param("instrumentId") final Long instrumentId, @Param("orderBookId") final Long orderBookId);
 	
 }

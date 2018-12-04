@@ -50,5 +50,15 @@ public interface PageURLConstants {
 	 */
 	String SHOW_ORDERS = "order-book/order-history";
 	
+	/**
+	 * Constant for stats.
+	 */
+	String STATS = "/{instrumentName}/{orderBookId}/stats";
+	
+	/**
+	 * Constant for orderDetail
+	 */
+	String ORDER_DETAIL = "/{orderId}";
+	
 
 }

@@ -17,7 +17,7 @@ import com.creditsuisse.orderbook.app.repository.domain.OrderDetail;
 @Component
 public class OrderDetailMapper {
 
-	public List<OrderDetailObject> mapOrderDetailEntitytoObject(List<OrderDetail> orderDetails) {
+	public List<OrderDetailObject> mapOrderDetailEntitytoObjectList(List<OrderDetail> orderDetails) {
 		List<OrderDetailObject> orders = new ArrayList<>();
 		for(OrderDetail orderDetail : orderDetails) {
 			OrderDetailObject orderDetailObject = new OrderDetailObject();
@@ -49,6 +49,19 @@ public class OrderDetailMapper {
 		orderDetail.setOrderBookId(orderDetailObject.getOrderBookId());
 		orderDetail.setInstrumentId(orderDetailObject.getInstrumentId());
 		return orderDetail;
+	}
+
+	public OrderDetailObject mapOrderDetailEntitytoObject(OrderDetail order) {
+		OrderDetailObject detailObject = new OrderDetailObject();
+		detailObject.setEntryDate(order.getOrderCreationDate());
+		detailObject.setInstrumentId(order.getInstrumentId());
+		detailObject.setOrderBookId(order.getOrderBookId());
+		detailObject.setOrderType(order.getOrderType());
+		detailObject.setPrice(order.getPrice());
+		detailObject.setQuantity(order.getQuantity());
+		detailObject.setStatus(order.getStatus());
+		detailObject.setOrderId(order.getOid());
+		return detailObject;
 	}
 
 }

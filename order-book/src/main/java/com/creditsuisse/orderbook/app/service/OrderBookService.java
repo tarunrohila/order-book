@@ -6,6 +6,7 @@ import com.creditsuisse.orderbook.app.dto.ExecutionParameter;
 import com.creditsuisse.orderbook.app.dto.InstrumentObject;
 import com.creditsuisse.orderbook.app.dto.OrderBookObject;
 import com.creditsuisse.orderbook.app.dto.OrderDetailObject;
+import com.creditsuisse.orderbook.app.dto.Stats;
 
 /**
  * This interface provides operation required for order book.
@@ -30,25 +31,11 @@ public interface OrderBookService {
 	void addInstrument(InstrumentObject orderBookObject);
 
 	/**
-	 * This method is toggles the status of instrument as open or close
-	 * 
-	 * @param instrumentId
-	 */
-	void toggleStatus(Integer instrumentId);
-
-	/**
 	 * This method is used to delete financial instrument.
 	 * 
 	 * @param instrumentId
 	 */
 	void deleteInstrument(Long instrumentId);
-
-	/**
-	 * Method to retrieve orders
-	 * 
-	 * @return list of orders
-	 */
-	List<OrderDetailObject> retrieveOrders();
 
 	
 	/**
@@ -94,5 +81,20 @@ public interface OrderBookService {
 	 * @param executionParameter 
 	 */
 	String executeOrderBook(OrderBookObject orderBookObject, ExecutionParameter executionParameter);
+
+	/**
+	 * THis method is used to provided order stats for instrumnt
+	 * @param orderBookId 
+	 * @param instrumentName
+	 * @return
+	 */
+	Stats getStats(Long instrumentId, Long orderBookId);
+
+	/**
+	 * Method to get order details
+	 * @param orderId
+	 * @return
+	 */
+	OrderDetailObject retrieveOrderDetails(Long orderId);
 
 }
