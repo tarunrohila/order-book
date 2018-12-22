@@ -10,6 +10,18 @@ public interface PageURLConstants {
 
 	
 	/**
+	 * Constant for index
+	 * 
+	 */
+	String INDEX_URL = "/";
+	
+	/**
+	 * Constant for index page
+	 * 
+	 */
+	String INDEX_PAGE = "index";
+	
+	/**
 	 * Constant for instruments.
 	 */
 	String INSTRUMENTS = "/instruments";
@@ -33,17 +45,17 @@ public interface PageURLConstants {
 	/**
 	 * Constant for closing order book
 	 */
-	String CLOSE_ORDER_BOOK = "/{instrumentName}/{orderBookId}/close";
+	String CLOSE_ORDER_BOOK = "/{instrumentName}/close";
 	
 	/**
 	 * Constant for executing order book
 	 */
-	String EXECUTE_ORDER_BOOK = "/{instrumentName}/{orderBookId}/execute";
+	String EXECUTE_ORDER_BOOK = "/{instrumentName}/execute";
 	
 	/**
 	 * Constant for adding order in an order book
 	 */
-	String ADD_ORDER = "/{instrumentName}/{orderBookId}/add-order";
+	String ADD_ORDER = "/{instrumentName}/add-order";
 	
 	/**
 	 * Constant for order history
@@ -59,6 +71,13 @@ public interface PageURLConstants {
 	 * Constant for orderDetail
 	 */
 	String ORDER_DETAIL = "/{orderId}";
+	
+	String ADD_INSTRUMENT_URL = "add-instrument-url";
+	String ADD_INSTRUMENT_PAGE = "add-instrument-page";
+	
+	String ORDER_BOOKS_URL = "order-books-url";
+	
+	String ORDER_BOOKS_PAGE = "orderbooks";
 	
 
 }

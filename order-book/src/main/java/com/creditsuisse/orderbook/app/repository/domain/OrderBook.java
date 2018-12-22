@@ -6,6 +6,8 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,6 +16,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.creditsuisse.orderbook.app.dto.StatusEnum;
 
 import io.swagger.annotations.ApiModelProperty;
 
@@ -46,7 +50,8 @@ public class OrderBook implements Serializable {
 	 * Variable declaration for status
 	 */
 	@ApiModelProperty(notes = "Order book status")
-	private String status;
+	@Enumerated(EnumType.STRING)
+	private StatusEnum status;
 	
 	/*
 	 * Variable declaration for instrumentId
@@ -86,7 +91,7 @@ public class OrderBook implements Serializable {
 	 *
 	 * @return the status
 	 */
-	public String getStatus() {
+	public StatusEnum getStatus() {
 		return status;
 	}
 
@@ -95,7 +100,7 @@ public class OrderBook implements Serializable {
 	 *
 	 * @param status the status to set
 	 */
-	public void setStatus(String status) {
+	public void setStatus(StatusEnum status) {
 		this.status = status;
 	}
 

@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.creditsuisse.orderbook.app.dto.StatusEnum;
 import com.creditsuisse.orderbook.app.repository.domain.OrderBook;
 
 /**
@@ -20,10 +21,10 @@ public interface OrderBookRepository extends JpaRepository<OrderBook, Long> {
 
 	@Modifying
 	@Query("UPDATE OrderBook SET status= :status WHERE oid= :oid")
-	void closeOrderBook(@Param("status") String status, @Param("oid") Long oid);
+	void closeOrderBook(@Param("status") StatusEnum status, @Param("oid") Long oid);
 
 	@Modifying
-	@Query("UPDATE OrderBook SET status= :status WHERE oid= :oid")
-	void executeOrderBook(String status, Long orderId);
+	@Query("UPDATE OrderBook SET status= :status WHERE oid= :orderId")
+	void executeOrderBook(@Param("status") StatusEnum status, @Param("orderId") Long orderId);
 
 }

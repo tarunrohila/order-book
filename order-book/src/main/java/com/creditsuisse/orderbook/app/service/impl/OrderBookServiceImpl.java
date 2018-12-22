@@ -1,9 +1,7 @@
 package com.creditsuisse.orderbook.app.service.impl;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.OptionalInt;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -308,7 +306,7 @@ public class OrderBookServiceImpl implements OrderBookService {
 			}
 		}
 		getOrderBookRepository().executeOrderBook(orderBookObject.getStatus(), orderBookObject.getOrderId());
-		return "Order execution id done";
+		return "Order execution is done";
 		
 	}
 

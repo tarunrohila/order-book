@@ -20,6 +20,7 @@ import com.creditsuisse.orderbook.app.dto.ExecutionParameter;
 import com.creditsuisse.orderbook.app.dto.InstrumentObject;
 import com.creditsuisse.orderbook.app.dto.OrderBookObject;
 import com.creditsuisse.orderbook.app.dto.OrderDetailObject;
+import com.creditsuisse.orderbook.app.dto.StatusEnum;
 import com.creditsuisse.orderbook.app.mapper.InstrumentMapper;
 import com.creditsuisse.orderbook.app.mapper.OrderBookMapper;
 import com.creditsuisse.orderbook.app.mapper.OrderDetailMapper;
@@ -159,7 +160,7 @@ public class OrderBookServiceImplTest {
 		OrderBookObject orderBookObject = new OrderBookObject();
 		orderBookObject.setInstrumentId(new Long(101));
 		orderBookObject.setOrderId(new Long(101));
-		orderBookObject.setStatus("OPEN");
+		orderBookObject.setStatus(StatusEnum.OPEN);
 		ExecutionParameter executionParameter = new ExecutionParameter();
 		executionParameter.setExecutionPrice(new Long(101));
 		executionParameter.setExecutionQuantity(new Long(100));

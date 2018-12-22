@@ -21,6 +21,7 @@ import com.creditsuisse.orderbook.app.dto.InstrumentObject;
 import com.creditsuisse.orderbook.app.dto.OrderBookObject;
 import com.creditsuisse.orderbook.app.dto.OrderDetailObject;
 import com.creditsuisse.orderbook.app.dto.Stats;
+import com.creditsuisse.orderbook.app.dto.StatusEnum;
 import com.creditsuisse.orderbook.app.service.OrderBookService;
 
 import io.swagger.annotations.Api;
@@ -49,9 +50,14 @@ public class OrderBookController extends AbstractController implements PageURLCo
 	 */
 	@ApiOperation(value="Add new financial instrument", response = String.class)
 	@PostMapping(value=ADD_INSTRUMENT)
-	public String addInstument(@RequestBody InstrumentObject orderBookObject) {
-		getOrderBookService().addInstrument(orderBookObject);
-		return "New Instrument "+orderBookObject.getInstrumentName()+" is created" ;
+	public String addInstument(@RequestBody InstrumentObject instrumentObject) {
+		InstrumentObject instrument = getOrderBookService().retrieveInstrumentByName(instrumentObject.getInstrumentName());
+		if(instrument != null) {
+			return "New Instrument "+instrumentObject.getInstrumentName()+" is already exist" ;
+		} else {
+			getOrderBookService().addInstrument(instrumentObject);
+			return "New Instrument "+instrumentObject.getInstrumentName()+" is created" ;
+		}
 	}
 	
 	/**
@@ -92,15 +98,25 @@ public class OrderBookController extends AbstractController implements PageURLCo
 	public String openOrderBook(@PathVariable("instrumentName") String instrumentName) {
 		OrderBookObject orderBookObject = new OrderBookObject();
 		InstrumentObject instrumentObject = getOrderBookService().retrieveInstrumentByName(instrumentName);
-		if(instrumentObject != null) {
-			orderBookObject.setStatus("OPEN");
-			orderBookObject.setInstrumentId(instrumentObject.getInstrumentId());
-			getOrderBookService().openOrderBook(orderBookObject);
-		} else {
+		if(instrumentObject != null && instrumentObject.getOrderBooks() != null && !instrumentObject.getOrderBooks().isEmpty()) {
+			boolean isOpen = false;
+			for(OrderBookObject orderBook : instrumentObject.getOrderBooks()) {
+				if(StatusEnum.OPEN.equals(orderBook.getStatus()) || StatusEnum.CLOSE.equals(orderBook.getStatus())) {
+					isOpen = true;
+				}
+			}
+			if(isOpen) {
+				return "Order book for "+instrumentName+" is already opened or needs to be executed";
+			} else {
+				orderBookObject.setStatus(StatusEnum.OPEN);
+				orderBookObject.setInstrumentId(instrumentObject.getInstrumentId());
+				getOrderBookService().openOrderBook(orderBookObject);
+				return "Order book for "+instrumentName+" is open, you can add orders";
+			}
+			
+		}  else {
 			return "Order book for "+instrumentName+" can't be opned because there are no instrument present with this name";
 		}
-	
-		return "Order book for "+instrumentName+" is open, you can add orders";
 	}
 	
 	/**
@@ -111,29 +127,23 @@ public class OrderBookController extends AbstractController implements PageURLCo
 	 */
 	@ApiOperation(value="Close an order book", response = String.class)
 	@PutMapping(CLOSE_ORDER_BOOK)
-	public String closeOrderBook(@PathVariable("instrumentName") String instrumentName, @PathVariable("orderBookId") Long orderBookId) {
+	public String closeOrderBook(@PathVariable("instrumentName") String instrumentName) {
 		InstrumentObject instrumentObject = getOrderBookService().retrieveInstrumentByName(instrumentName);
 		if(instrumentObject != null && instrumentObject.getOrderBooks() != null && !instrumentObject.getOrderBooks().isEmpty()) {
 			for(OrderBookObject orderBookObject : instrumentObject.getOrderBooks()) {
-				if(orderBookObject.getOrderId().equals(orderBookId)) {
-					if("CLOSE".equals(orderBookObject.getStatus())) {
-						return "Order book for "+instrumentName+" is already closed";
-					} else if("EXECUTED".equals(orderBookObject.getStatus())) {
-						return "Order book for "+instrumentName+" is already executed";
-					} else {
-						orderBookObject.setStatus("CLOSE");
+					if(StatusEnum.OPEN.equals(orderBookObject.getStatus()) ) {
+						orderBookObject.setStatus(StatusEnum.CLOSE);
 						orderBookObject.setInstrumentId(instrumentObject.getInstrumentId());
 						getOrderBookService().closeOrderBook(orderBookObject);
-						break;
+						return "Order book for "+instrumentName+" is closed now, you can execute only orders";
 					}
 					
-				}
 			}
 		} else {
 			return "Order book for "+instrumentName+" can't be closed because there are no instrument/order book present with provided details";
 		}
 	
-		return "Order book for "+instrumentName+" is closed now, you can execute only orders";
+		return "No open Order book is found for "+instrumentName;
 	}
 	
 	/**
@@ -144,28 +154,22 @@ public class OrderBookController extends AbstractController implements PageURLCo
 	 */
 	@ApiOperation(value="execute an order book", response = String.class)
 	@PutMapping(EXECUTE_ORDER_BOOK)
-	public String executeOrderBook(@RequestBody ExecutionParameter executionParameter, @PathVariable("instrumentName") String instrumentName, @PathVariable("orderBookId") Long orderBookId) {
+	public String executeOrderBook(@RequestBody ExecutionParameter executionParameter, @PathVariable("instrumentName") String instrumentName) {
 		InstrumentObject instrumentObject = getOrderBookService().retrieveInstrumentByName(instrumentName);
 		if(instrumentObject != null && instrumentObject.getOrderBooks() != null && !instrumentObject.getOrderBooks().isEmpty()) {
 			for(OrderBookObject orderBookObject : instrumentObject.getOrderBooks()) {
-				if(orderBookObject.getOrderId().equals(orderBookId)) {
-					if("OPEN".equals(orderBookObject.getStatus())) {
-						return "Order book for "+instrumentName+" is open, only closed order book can be executed";
-					} else if("EXECUTED".equals(orderBookObject.getStatus())) {
-						return "Order book for "+instrumentName+" is already executed";
-					} else {
-						orderBookObject.setStatus("EXECUTED");
+					if(StatusEnum.CLOSE.equals(orderBookObject.getStatus())) {
+						orderBookObject.setStatus(StatusEnum.EXECUTED);
 						orderBookObject.setInstrumentId(instrumentObject.getInstrumentId());
 						return getOrderBookService().executeOrderBook(orderBookObject, executionParameter);
-					}
+					} 
 					
-				}
 			}
 		} else {
 			return "Order book for "+instrumentName+" can't be closed because there are no instrument/order book present with provided details";
 		}
 	
-		return "Order book for "+instrumentName+" is Executed now";
+		return "Order is book is either already closed or still open";
 	}
 	
 	/**
@@ -177,23 +181,21 @@ public class OrderBookController extends AbstractController implements PageURLCo
 	 */
 	@ApiOperation(value="Add new order", response = String.class)
 	@PostMapping(ADD_ORDER)
-	public String addOrder(@RequestBody OrderDetailObject orderDetailObject, @PathVariable("instrumentName") String instrumentName, @PathVariable("orderBookId") Long orderBookId) {
+	public String addOrder(@RequestBody OrderDetailObject orderDetailObject, @PathVariable("instrumentName") String instrumentName) {
 		InstrumentObject instrumentObject = getOrderBookService().retrieveInstrumentByName(instrumentName);
 		if(instrumentObject != null && instrumentObject.getOrderBooks() != null && !instrumentObject.getOrderBooks().isEmpty()) {
 			for(OrderBookObject orderBookObject : instrumentObject.getOrderBooks()) {
-				if(orderBookObject.getOrderId().equals(orderBookId) && "CLOSE".equalsIgnoreCase(orderBookObject.getStatus())) {
-					return "Order Book is already close so you can't add any orders";
-				} else {
+				if(StatusEnum.OPEN.equals(orderBookObject.getStatus())) {
 					orderDetailObject.setInstrumentId(instrumentObject.getInstrumentId());
-					orderDetailObject.setOrderBookId(orderBookId);
 					orderDetailObject.setStatus("invalid");
+					orderDetailObject.setOrderBookId(orderBookObject.getOrderId());
 					orderDetailObject.setEntryDate(new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date()));
 					getOrderBookService().addOrder(orderDetailObject);
 					return "New order for "+instrumentName+" is added";
 				}
 			}
 		} 
-		return "Order book for "+instrumentName+" is not present so no orders can be added";
+		return "No open order book for "+instrumentName+" is not present so no orders can be added";
 	}
 	
 

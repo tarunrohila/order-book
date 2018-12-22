@@ -17,7 +17,7 @@ public class OrderBookObject {
 	/*
 	 * Variable declaration for status
 	 */
-	private String status;
+	private StatusEnum status;
 	
 	/*
 	 * Variable declaration for status
@@ -55,7 +55,7 @@ public class OrderBookObject {
 	 *
 	 * @return the status
 	 */
-	public String getStatus() {
+	public StatusEnum getStatus() {
 		return status;
 	}
 
@@ -64,7 +64,7 @@ public class OrderBookObject {
 	 *
 	 * @param status the status to set
 	 */
-	public void setStatus(String status) {
+	public void setStatus(StatusEnum status) {
 		this.status = status;
 	}
 

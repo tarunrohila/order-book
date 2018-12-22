@@ -12,7 +12,8 @@ import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
- * This is configuration class for book order application to do all common configuration in it.
+ * This is configuration class for book order application to do all common
+ * configuration in it.
  * 
  * @author Tarun Rohila
  * @since Nov 28, 2018
@@ -20,26 +21,33 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @Configuration
 @EnableSwagger2
 public class AppConfig {
-	
-	 @Bean
-	    public Docket productApi() {
-	        return new Docket(DocumentationType.SWAGGER_2)
-	                .select()
-	                .apis(RequestHandlerSelectors.basePackage("com.creditsuisse.orderbook.app.controller"))
-	                .paths(PathSelectors.any())
-	                .build()
-	                .apiInfo(metaData());
-	    }
-	    private ApiInfo metaData() {
-	        ApiInfo apiInfo = new ApiInfo(
-	                "REST API",
-	                "REST API for Order Book",
-	                "1.0",
-	                "Terms of service",
-	                new Contact("Tarun Rohila", "http://localhost:7777/order-book", "tarunrohila@gmail.com"),
-	               "Apache License Version 2.0",
-	                "https://www.apache.org/licenses/LICENSE-2.0");
-	        return apiInfo;
-	    }
+
+	/**
+	 * Configuration to enable swaggar api
+	 * 
+	 * @return swaggar api docket
+	 */
+	@Bean
+	public Docket productApi() {
+		return new Docket(DocumentationType.SWAGGER_2)
+				.select()
+				.apis(RequestHandlerSelectors
+						.basePackage("com.creditsuisse.orderbook.app.controller"))
+				.paths(PathSelectors.any()).build().apiInfo(metaData());
+	}
+
+	/**
+	 * Method to prepare meta data for swagger to create document.
+	 * 
+	 * @return return metadata
+	 */
+	private ApiInfo metaData() {
+		ApiInfo apiInfo = new ApiInfo("REST API", "REST API for Order Book",
+				"1.0", "Terms of service", new Contact("Tarun Rohila",
+						"http://localhost:7777/order-book",
+						"tarunrohila@gmail.com"), "Apache License Version 2.0",
+				"https://www.apache.org/licenses/LICENSE-2.0");
+		return apiInfo;
+	}
 
 }

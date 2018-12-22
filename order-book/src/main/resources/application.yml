@@ -6,6 +6,10 @@ server:
 ---
 spring:
   profiles: local, default
+  mvc:
+    view: 
+      prefix: /WEB-INF/templates/
+      suffix: .jsp
   h2:
     console:
       enabled: true

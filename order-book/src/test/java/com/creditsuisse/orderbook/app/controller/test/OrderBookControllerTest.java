@@ -22,6 +22,7 @@ import com.creditsuisse.orderbook.app.controller.OrderBookController;
 import com.creditsuisse.orderbook.app.dto.ExecutionParameter;
 import com.creditsuisse.orderbook.app.dto.InstrumentObject;
 import com.creditsuisse.orderbook.app.dto.OrderBookObject;
+import com.creditsuisse.orderbook.app.dto.StatusEnum;
 import com.creditsuisse.orderbook.app.service.OrderBookService;
 import com.creditsuisse.orderbook.app.service.impl.OrderBookServiceImpl;
 
@@ -147,8 +148,8 @@ public class OrderBookControllerTest {
 	public void testCloseOrderBook() {
 		orderBookController.setOrderBookService(orderBookService);
 		Mockito.when(orderBookService.retrieveInstrumentByName("TCS")).thenReturn(null);
-		System.out.println(orderBookController.closeOrderBook("TCS", new Long(101)));
-		assertNotNull(orderBookController.closeOrderBook("TCS", new Long(101)));
+		System.out.println(orderBookController.closeOrderBook("TCS"));
+		assertNotNull(orderBookController.closeOrderBook("TCS"));
 	}
 	@Test
 	public void testCloseOrderBookOrderBookNull() {
@@ -156,8 +157,8 @@ public class OrderBookControllerTest {
 		InstrumentObject instrumentObject = new InstrumentObject();
 		instrumentObject.setOrderBooks(null);
 		Mockito.when(orderBookService.retrieveInstrumentByName("TCS")).thenReturn(instrumentObject);
-		System.out.println(orderBookController.closeOrderBook("TCS", new Long(101)));
-		assertNotNull(orderBookController.closeOrderBook("TCS", new Long(101)));
+		System.out.println(orderBookController.closeOrderBook("TCS"));
+		assertNotNull(orderBookController.closeOrderBook("TCS"));
 	}
 	
 	@Test
@@ -166,8 +167,8 @@ public class OrderBookControllerTest {
 		InstrumentObject instrumentObject = new InstrumentObject();
 		instrumentObject.setOrderBooks(new HashSet<>());
 		Mockito.when(orderBookService.retrieveInstrumentByName("TCS")).thenReturn(instrumentObject);
-		System.out.println(orderBookController.closeOrderBook("TCS", new Long(101)));
-		assertNotNull(orderBookController.closeOrderBook("TCS", new Long(101)));
+		System.out.println(orderBookController.closeOrderBook("TCS"));
+		assertNotNull(orderBookController.closeOrderBook("TCS"));
 	}
 	
 	@Test
@@ -177,12 +178,12 @@ public class OrderBookControllerTest {
 		Set<OrderBookObject> orderBooks = new HashSet<>();
 		OrderBookObject book = new OrderBookObject();
 		book.setOrderId(new Long(101));
-		book.setStatus("CLOSE");
+		book.setStatus(StatusEnum.CLOSE);
 		orderBooks.add(book);
 		instrumentObject.setOrderBooks(orderBooks);
 		Mockito.when(orderBookService.retrieveInstrumentByName("TCS")).thenReturn(instrumentObject);
-		System.out.println(orderBookController.closeOrderBook("TCS", new Long(102)));
-		assertNotNull(orderBookController.closeOrderBook("TCS", new Long(102)));
+		System.out.println(orderBookController.closeOrderBook("TCS"));
+		assertNotNull(orderBookController.closeOrderBook("TCS"));
 	}
 	
 	@Test
@@ -192,12 +193,12 @@ public class OrderBookControllerTest {
 		Set<OrderBookObject> orderBooks = new HashSet<>();
 		OrderBookObject book = new OrderBookObject();
 		book.setOrderId(new Long(101));
-		book.setStatus("OPEN");
+		book.setStatus(StatusEnum.OPEN);
 		orderBooks.add(book);
 		instrumentObject.setOrderBooks(orderBooks);
 		Mockito.when(orderBookService.retrieveInstrumentByName("TCS")).thenReturn(instrumentObject);
-		System.out.println(orderBookController.closeOrderBook("TCS", new Long(101)));
-		assertNotNull(orderBookController.closeOrderBook("TCS", new Long(101)));
+		System.out.println(orderBookController.closeOrderBook("TCS"));
+		assertNotNull(orderBookController.closeOrderBook("TCS"));
 	}
 	
 	@Test
@@ -207,20 +208,20 @@ public class OrderBookControllerTest {
 		Set<OrderBookObject> orderBooks = new HashSet<>();
 		OrderBookObject book = new OrderBookObject();
 		book.setOrderId(new Long(101));
-		book.setStatus("EXECUTED");
+		book.setStatus(StatusEnum.EXECUTED);
 		orderBooks.add(book);
 		instrumentObject.setOrderBooks(orderBooks);
 		Mockito.when(orderBookService.retrieveInstrumentByName("TCS")).thenReturn(instrumentObject);
-		System.out.println(orderBookController.closeOrderBook("TCS", new Long(101)));
-		assertNotNull(orderBookController.closeOrderBook("TCS", new Long(101)));
+		System.out.println(orderBookController.closeOrderBook("TCS"));
+		assertNotNull(orderBookController.closeOrderBook("TCS"));
 	}
 	
 	@Test
 	public void testExecuteOrderBook() {
 		orderBookController.setOrderBookService(orderBookService);
 		Mockito.when(orderBookService.retrieveInstrumentByName("TCS")).thenReturn(null);
-		System.out.println(orderBookController.executeOrderBook(Mockito.any(ExecutionParameter.class),"TCS", new Long(101)));
-		assertNotNull(orderBookController.executeOrderBook(Mockito.any(ExecutionParameter.class),"TCS", new Long(101)));
+		System.out.println(orderBookController.executeOrderBook(Mockito.any(ExecutionParameter.class),"TCS"));
+		assertNotNull(orderBookController.executeOrderBook(Mockito.any(ExecutionParameter.class),"TCS"));
 	}
 	@Test
 	public void testExecuteOrderBookOrderBookNull() {
@@ -228,8 +229,8 @@ public class OrderBookControllerTest {
 		InstrumentObject instrumentObject = new InstrumentObject();
 		instrumentObject.setOrderBooks(null);
 		Mockito.when(orderBookService.retrieveInstrumentByName("TCS")).thenReturn(instrumentObject);
-		System.out.println(orderBookController.executeOrderBook(Mockito.any(ExecutionParameter.class),"TCS", new Long(101)));
-		assertNotNull(orderBookController.executeOrderBook(Mockito.any(ExecutionParameter.class),"TCS", new Long(101)));
+		System.out.println(orderBookController.executeOrderBook(Mockito.any(ExecutionParameter.class),"TCS"));
+		assertNotNull(orderBookController.executeOrderBook(Mockito.any(ExecutionParameter.class),"TCS"));
 	}
 	
 	@Test
@@ -238,8 +239,8 @@ public class OrderBookControllerTest {
 		InstrumentObject instrumentObject = new InstrumentObject();
 		instrumentObject.setOrderBooks(new HashSet<>());
 		Mockito.when(orderBookService.retrieveInstrumentByName("TCS")).thenReturn(instrumentObject);
-		System.out.println(orderBookController.executeOrderBook(Mockito.any(ExecutionParameter.class),"TCS", new Long(101)));
-		assertNotNull(orderBookController.executeOrderBook(Mockito.any(ExecutionParameter.class),"TCS", new Long(101)));
+		System.out.println(orderBookController.executeOrderBook(Mockito.any(ExecutionParameter.class),"TCS"));
+		assertNotNull(orderBookController.executeOrderBook(Mockito.any(ExecutionParameter.class),"TCS"));
 	}
 	
 	@Test
@@ -249,13 +250,13 @@ public class OrderBookControllerTest {
 		Set<OrderBookObject> orderBooks = new HashSet<>();
 		OrderBookObject book = new OrderBookObject();
 		book.setOrderId(new Long(101));
-		book.setStatus("CLOSE");
+		book.setStatus(StatusEnum.CLOSE);
 		orderBooks.add(book);
 		instrumentObject.setOrderBooks(orderBooks);
 		Mockito.when(orderBookService.retrieveInstrumentByName("TCS")).thenReturn(instrumentObject);
 		//Mockito.when(orderBookService.executeOrderBook(book, executionParameter)).thenReturn("Order Book is executed");
-		System.out.println(orderBookController.executeOrderBook(Mockito.any(ExecutionParameter.class),"TCS", new Long(101)));
-		assertNotNull(orderBookController.executeOrderBook(Mockito.any(ExecutionParameter.class),"TCS", new Long(101)));
+		System.out.println(orderBookController.executeOrderBook(Mockito.any(ExecutionParameter.class),"TCS"));
+		assertNotNull(orderBookController.executeOrderBook(Mockito.any(ExecutionParameter.class),"TCS"));
 	}
 	
 	@Test
@@ -265,12 +266,12 @@ public class OrderBookControllerTest {
 		Set<OrderBookObject> orderBooks = new HashSet<>();
 		OrderBookObject book = new OrderBookObject();
 		book.setOrderId(new Long(101));
-		book.setStatus("EXECUTED");
+		book.setStatus(StatusEnum.EXECUTED);
 		orderBooks.add(book);
 		instrumentObject.setOrderBooks(orderBooks);
 		Mockito.when(orderBookService.retrieveInstrumentByName("TCS")).thenReturn(instrumentObject);
-		System.out.println(orderBookController.executeOrderBook(Mockito.any(ExecutionParameter.class),"TCS", new Long(101)));
-		assertNotNull(orderBookController.executeOrderBook(Mockito.any(ExecutionParameter.class),"TCS", new Long(101)));
+		System.out.println(orderBookController.executeOrderBook(Mockito.any(ExecutionParameter.class),"TCS"));
+		assertNotNull(orderBookController.executeOrderBook(Mockito.any(ExecutionParameter.class),"TCS"));
 	}
 	
 	@Test
@@ -280,12 +281,12 @@ public class OrderBookControllerTest {
 		Set<OrderBookObject> orderBooks = new HashSet<>();
 		OrderBookObject book = new OrderBookObject();
 		book.setOrderId(new Long(101));
-		book.setStatus("OPEN");
+		book.setStatus(StatusEnum.OPEN);
 		orderBooks.add(book);
 		instrumentObject.setOrderBooks(orderBooks);
 		Mockito.when(orderBookService.retrieveInstrumentByName("TCS")).thenReturn(instrumentObject);
-		System.out.println(orderBookController.executeOrderBook(Mockito.any(ExecutionParameter.class),"TCS", new Long(101)));
-		assertNotNull(orderBookController.executeOrderBook(Mockito.any(ExecutionParameter.class),"TCS", new Long(101)));
+		System.out.println(orderBookController.executeOrderBook(Mockito.any(ExecutionParameter.class),"TCS"));
+		assertNotNull(orderBookController.executeOrderBook(Mockito.any(ExecutionParameter.class),"TCS"));
 	}
 	
 	@Test

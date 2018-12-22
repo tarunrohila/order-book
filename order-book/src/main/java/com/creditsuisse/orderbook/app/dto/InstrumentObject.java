@@ -20,6 +20,10 @@ public class InstrumentObject {
 	 */
 	private String instrumentName;
 	
+	public InstrumentObject() {
+		super();
+	}
+
 	/*
 	 * Variable declaration for orderBooks
 	 */
