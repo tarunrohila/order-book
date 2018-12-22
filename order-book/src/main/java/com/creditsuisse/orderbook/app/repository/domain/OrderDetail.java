@@ -1,16 +1,20 @@
 package com.creditsuisse.orderbook.app.repository.domain;
 
+import io.swagger.annotations.ApiModelProperty;
+
 import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
-import io.swagger.annotations.ApiModelProperty;
+import com.creditsuisse.orderbook.app.dto.OrderStatus;
 
 /**
  * Entity Class for Order to save this object in database.
@@ -45,7 +49,8 @@ public class OrderDetail implements Serializable {
 	 * Variable declaration for status
 	 */
 	@ApiModelProperty(notes = "Status or order")
-	private String status;
+	@Enumerated(EnumType.STRING)
+	private OrderStatus status;
 	
 	/*
 	 * Variable declaration for quantity
@@ -101,7 +106,7 @@ public class OrderDetail implements Serializable {
 	 *
 	 * @return the status
 	 */
-	public String getStatus() {
+	public OrderStatus getStatus() {
 		return status;
 	}
 
@@ -110,7 +115,7 @@ public class OrderDetail implements Serializable {
 	 *
 	 * @param status the status to set
 	 */
-	public void setStatus(String status) {
+	public void setStatus(OrderStatus status) {
 		this.status = status;
 	}
 

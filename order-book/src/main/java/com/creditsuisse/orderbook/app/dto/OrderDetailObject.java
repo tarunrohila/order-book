@@ -17,7 +17,7 @@ public class OrderDetailObject {
 	/*
 	 * Variable declaration for status
 	 */
-	private String status;
+	private OrderStatus status;
 	
 	/*
 	 * Variable declaration for quantity
@@ -72,7 +72,7 @@ public class OrderDetailObject {
 	 *
 	 * @return the status
 	 */
-	public String getStatus() {
+	public OrderStatus getStatus() {
 		return status;
 	}
 
@@ -81,7 +81,7 @@ public class OrderDetailObject {
 	 *
 	 * @param status the status to set
 	 */
-	public void setStatus(String status) {
+	public void setStatus(OrderStatus status) {
 		this.status = status;
 	}
 

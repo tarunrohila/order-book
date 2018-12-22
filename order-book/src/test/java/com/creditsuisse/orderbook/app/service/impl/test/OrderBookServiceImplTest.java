@@ -20,6 +20,7 @@ import com.creditsuisse.orderbook.app.dto.ExecutionParameter;
 import com.creditsuisse.orderbook.app.dto.InstrumentObject;
 import com.creditsuisse.orderbook.app.dto.OrderBookObject;
 import com.creditsuisse.orderbook.app.dto.OrderDetailObject;
+import com.creditsuisse.orderbook.app.dto.OrderStatus;
 import com.creditsuisse.orderbook.app.dto.StatusEnum;
 import com.creditsuisse.orderbook.app.mapper.InstrumentMapper;
 import com.creditsuisse.orderbook.app.mapper.OrderBookMapper;
@@ -171,7 +172,7 @@ public class OrderBookServiceImplTest {
 		orderDetail.setOrderType("limit");
 		orderDetail.setPrice(new Long(101));
 		orderDetail.setQuantity(10);
-		orderDetail.setStatus("valid");
+		orderDetail.setStatus(OrderStatus.VALID);
 		orders.add(orderDetail);
 		orderBookObject.setOrders(orders);
 		orderBookServiceImpl.setOrderDetailMapper(orderDetailMapper);

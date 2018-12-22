@@ -20,6 +20,7 @@ import com.creditsuisse.orderbook.app.dto.ExecutionParameter;
 import com.creditsuisse.orderbook.app.dto.InstrumentObject;
 import com.creditsuisse.orderbook.app.dto.OrderBookObject;
 import com.creditsuisse.orderbook.app.dto.OrderDetailObject;
+import com.creditsuisse.orderbook.app.dto.OrderStatus;
 import com.creditsuisse.orderbook.app.dto.Stats;
 import com.creditsuisse.orderbook.app.dto.StatusEnum;
 import com.creditsuisse.orderbook.app.service.OrderBookService;
@@ -114,7 +115,13 @@ public class OrderBookController extends AbstractController implements PageURLCo
 				return "Order book for "+instrumentName+" is open, you can add orders";
 			}
 			
-		}  else {
+		} else if(instrumentObject != null) {
+			orderBookObject.setStatus(StatusEnum.OPEN);
+			orderBookObject.setInstrumentId(instrumentObject.getInstrumentId());
+			getOrderBookService().openOrderBook(orderBookObject);
+			return "Order book for "+instrumentName+" is open, you can add orders";
+		}
+		else {
 			return "Order book for "+instrumentName+" can't be opned because there are no instrument present with this name";
 		}
 	}
@@ -187,7 +194,7 @@ public class OrderBookController extends AbstractController implements PageURLCo
 			for(OrderBookObject orderBookObject : instrumentObject.getOrderBooks()) {
 				if(StatusEnum.OPEN.equals(orderBookObject.getStatus())) {
 					orderDetailObject.setInstrumentId(instrumentObject.getInstrumentId());
-					orderDetailObject.setStatus("invalid");
+					orderDetailObject.setStatus(OrderStatus.INVALID);
 					orderDetailObject.setOrderBookId(orderBookObject.getOrderId());
 					orderDetailObject.setEntryDate(new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date()));
 					getOrderBookService().addOrder(orderDetailObject);

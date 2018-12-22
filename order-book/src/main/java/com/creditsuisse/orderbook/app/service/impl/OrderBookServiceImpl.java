@@ -11,6 +11,7 @@ import com.creditsuisse.orderbook.app.dto.ExecutionParameter;
 import com.creditsuisse.orderbook.app.dto.InstrumentObject;
 import com.creditsuisse.orderbook.app.dto.OrderBookObject;
 import com.creditsuisse.orderbook.app.dto.OrderDetailObject;
+import com.creditsuisse.orderbook.app.dto.OrderStatus;
 import com.creditsuisse.orderbook.app.dto.Stats;
 import com.creditsuisse.orderbook.app.mapper.InstrumentMapper;
 import com.creditsuisse.orderbook.app.mapper.OrderBookMapper;
@@ -280,21 +281,29 @@ public class OrderBookServiceImpl implements OrderBookService {
 		List<OrderDetailObject> validOrders = new ArrayList<>();
 		Long demand = new Long(0);
 		for(OrderDetailObject detailObject: orderBookObject.getOrders()) {
-			if("limit".equalsIgnoreCase(detailObject.getOrderType()) && detailObject.getPrice()!=null && executionParameter.getExecutionPrice() >= detailObject.getPrice()) {
-				detailObject.setStatus("valid");
+			if("limit".equalsIgnoreCase(detailObject.getOrderType()) && detailObject.getPrice()!=null && executionParameter.getExecutionPrice() <= detailObject.getPrice()) {
+				detailObject.setStatus(OrderStatus.VALID);
+				//demand = demand + detailObject.getQuantity();
 				getOrderDetailRepository().setOrderStatus(detailObject.getStatus(), detailObject.getOrderId());
 			} else if("market".equalsIgnoreCase(detailObject.getOrderType())) {
-				detailObject.setStatus("valid");
+				detailObject.setStatus(OrderStatus.VALID);
+				//demand = demand + detailObject.getQuantity();
 				getOrderDetailRepository().setOrderStatus(detailObject.getStatus(), detailObject.getOrderId());
 			} else {
-				detailObject.setStatus("invalid");
+				detailObject.setStatus(OrderStatus.INVALID);
 				getOrderDetailRepository().setOrderStatusAndQty(detailObject.getStatus(), detailObject.getOrderId(),  0);
 			}
-			
-			validOrders = orderBookObject.getOrders().stream().filter(orderDetail -> "valid".equalsIgnoreCase(orderDetail.getStatus())).collect(Collectors.toList());
-			demand = validOrders.stream().mapToLong(order -> order.getPrice()).sum();
+		}
+			validOrders = orderBookObject.getOrders().stream().filter(orderDetail -> OrderStatus.VALID.equals(orderDetail.getStatus())).collect(Collectors.toList());
+			demand = validOrders.stream().mapToLong(order -> order.getQuantity()).sum();
 			if(executionParameter.getExecutionQuantity() < demand) {
-				return "Demand is higher than execution quantity";
+				for(OrderDetailObject validOrder : validOrders) {
+					if("market".equalsIgnoreCase(validOrder.getOrderType())) {
+						getOrderDetailRepository().setOrderStatusAndPriceAndQty(validOrder.getStatus(), validOrder.getOrderId(), executionParameter.getExecutionPrice(), (validOrder.getQuantity() * executionParameter.getExecutionQuantity().intValue()) / demand.intValue());
+					} else {
+						getOrderDetailRepository().setOrderStatusAndQty(validOrder.getStatus(), validOrder.getOrderId(), (validOrder.getQuantity() * executionParameter.getExecutionQuantity().intValue()) / demand.intValue());
+					}
+				}
 			} else {
 				for(OrderDetailObject validOrder : validOrders) {
 					if("market".equalsIgnoreCase(validOrder.getOrderType())) {
@@ -304,7 +313,6 @@ public class OrderBookServiceImpl implements OrderBookService {
 					}
 				}
 			}
-		}
 		getOrderBookRepository().executeOrderBook(orderBookObject.getStatus(), orderBookObject.getOrderId());
 		return "Order execution is done";
 		
@@ -315,8 +323,8 @@ public class OrderBookServiceImpl implements OrderBookService {
 	public Stats getStats(Long instrumentId, Long orderBookId) {
 		Stats stats = new Stats();
 		List<OrderDetail> orders = getOrderDetailRepository().getAllOrdersForInstrument(instrumentId, orderBookId);
-		List<OrderDetail> validOrders = orders.stream().filter(orderDetail -> "valid".equalsIgnoreCase(orderDetail.getStatus())).collect(Collectors.toList());
-		List<OrderDetail> invalidOrders = orders.stream().filter(orderDetail -> "invalid".equalsIgnoreCase(orderDetail.getStatus())).collect(Collectors.toList());
+		List<OrderDetail> validOrders = orders.stream().filter(orderDetail -> OrderStatus.VALID.equals(orderDetail.getStatus())).collect(Collectors.toList());
+		List<OrderDetail> invalidOrders = orders.stream().filter(orderDetail -> OrderStatus.INVALID.equals(orderDetail.getStatus())).collect(Collectors.toList());
 		int totalOrders = orders.size();
 		int totalValidOrder = validOrders.stream().mapToInt(order -> order.getQuantity()).sum();
 		int totalInvalidOrder = invalidOrders.stream().mapToInt(order -> order.getQuantity()).sum();
